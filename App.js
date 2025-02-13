@@ -1,4 +1,6 @@
 import { View, Text } from "react-native";
+import './global.css'
+import tw from 'twrnc';
 
 export default function App() {
   return (
@@ -9,7 +11,7 @@ export default function App() {
         alignItems: "center",
       }}
     >
-      <Text>Universal React with Expo</Text>
+      <Text style={tw`text-3xl text-black dark:text-white   `} >Universal React with Expo</Text>
     </View>
   );
 }
