@@ -15,6 +15,8 @@ export default function Home() {
 
     const navigation = useNavigation();
 
+    const [focused, setFocused] = useState(false)
+
     const [fontsLoaded] = useFonts({
         Cabin: require("./../../assets/fonts/cabin/Cabin-Regular.ttf"),
         CabinItalic: require("./../../assets/fonts/cabin/Cabin-Italic.ttf"),
@@ -54,8 +56,6 @@ export default function Home() {
             title: "Paints",
         },
     ]
-
-    const [focused, setFocused] = useState(false)
 
     return (
         <View style={[tw`p-3 py-5 bg-black  flex-1 `, { maxHeight: '100vh' }]}>
