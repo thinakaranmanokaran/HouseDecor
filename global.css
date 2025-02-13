@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: cabin;
+    src: url(./src/assets/fonts/cabin/Cabin-Regular.ttf);
+}
+
+@font-face {
+    font-family: switzer;
+    src: url(./src/assets/fonts/switzer/Switzer-Regular.otf);
+}
