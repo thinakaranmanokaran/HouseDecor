@@ -6,6 +6,14 @@ module.exports = {
       colors: {
         black: "#151515", 
         red: "#ef5a6f", 
+
+        lblue: "#cceeff",
+        bblue: "#bdf0ff",
+        yellow: "#bdf0ff",
+        yellow: "#fff59e",
+        violet: "#9e91ff",
+        green: "#7dff90",
+        rose: "#ffc9ed",
       },
     },
   },
