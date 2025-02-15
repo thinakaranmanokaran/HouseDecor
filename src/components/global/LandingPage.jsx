@@ -1,9 +1,9 @@
 import { View, Text, Image, Pressable } from "react-native";
 import "./../../../global.css";
 import tw from "./../../../tailwind";
+import images from "./../../assets/images";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
-import images from "./../../assets/images";
 import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -48,7 +48,7 @@ export default function LandingPage() {
                 {/* Get Started Button */}
                 <Pressable
                     style={tw`bg-red py-3 px-6 rounded-2xl w-11/12 mt-6`}
-                    onPress={() => navigation.navigate("Home")}
+                    onPress={() => navigation.navigate("SignIn")}
                 >
                     <Text style={[tw`text-white text-center text-lg`, { fontFamily: "Cabin" }]}>
                         Get Started

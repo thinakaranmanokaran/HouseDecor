@@ -3,16 +3,14 @@ import { useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function App() {
-  const [facing, setFacing] = useState("back"); // Removed <CameraType>
+  const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
@@ -29,13 +27,19 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      {/* Camera occupies only half of the screen */}
       <CameraView style={styles.camera} facing={facing}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
+            <Text style={styles.text}></Text>
           </TouchableOpacity>
         </View>
       </CameraView>
+
+      {/* Rest of the screen content */}
+      <View style={styles.bottomContainer}>
+        <Text style={styles.infoText}>Camera is active on half of the screen</Text>
+      </View>
     </View>
   );
 }
@@ -43,29 +47,44 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-  },
-  message: {
-    textAlign: "center",
-    paddingBottom: 10,
+    // backgroundColor: "#ffffff",
+    margin: 10, // Adds a white margin effect
+    marginTop: 35,
   },
   camera: {
-    flex: 1,
+    flex: 0.9, // Takes up half the screen
+    borderRadius: 25, // Optional: adds rounded corners for a better look
+    overflow: "hidden", // Ensures rounded corners work
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     backgroundColor: "transparent",
-    margin: 64,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    paddingBottom: 20,
   },
   button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 10,
+    border: "20px white ",
+    borderRadius: '50%',
   },
   text: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     color: "white",
+  },
+  bottomContainer: {
+    flex: 0.5, // Takes the remaining half of the screen
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    borderRadius: 15, // Optional: matches the camera view
+    overflow: "hidden",
+  },
+  infoText: {
+    fontSize: 16,
+    color: "#333",
   },
 });
