@@ -9,6 +9,9 @@ import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 
+import { SERVER_API_URL } from "@env";
+
+
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
 
@@ -16,6 +19,13 @@ const SignIn = () => {
 
     const [input, setInput] = useState(null);
     const [emailText, setEmailText] = useState("");
+    const [passwordText, setPasswordText] = useState("");
+
+    const [passwordStatus, setPasswordStatus] = useState(false)
+
+    function togglePassword() {
+        setPasswordStatus(!passwordStatus)
+    }
 
     const navigation = useNavigation();
 
@@ -39,27 +49,95 @@ const SignIn = () => {
         return null; // Prevent UI rendering until fonts are loaded
     }
 
+    const handleVerifyEmail = async () => {
+        if (!emailText) {
+            alert("Please enter an email");
+            return;
+        }
+
+        console.log("Making request to:", `${SERVER_API_URL}/api/users/check-email`);
+        console.log("Sending data:", JSON.stringify({ email: emailText }));
+
+        try {
+            const response = await fetch(`${SERVER_API_URL}/api/users/check-email`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailText }),
+            });
+
+            console.log("Response status:", response.status);
+            const data = await response.json();
+            console.log("Response data:", data);
+
+            if (response.ok) {
+                alert("Email exists! Proceeding...");
+                togglePassword()
+            } else {
+                alert(data.message || "Email not found");
+                navigation.navigate("SignUp")
+            }
+        } catch (error) {
+            console.error("Error during fetch:", error);
+            alert("Error verifying email. Please try again later.");
+        }
+    };
+
+    const handleSignIn = async () => {
+        if (!passwordText) {
+            alert("Please enter a password");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${SERVER_API_URL}/api/users/signin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailText, password: passwordText }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Sign-in successful!");
+                // Navigate to Home or Dashboard
+                navigation.navigate("Home");
+            } else {
+                alert(data.message || "Invalid credentials");
+            }
+        } catch (error) {
+            console.error("Error during fetch:", error);
+            alert("Error signing in. Please try again.");
+        }
+    };
+
+
+
+
     return (
         <View style={tw` flex justify-center items-center w-full h-full   `} >
             <Image source={images.Scooty} style={tw` h-full top-0 w-full  absolute  `} />
             <View style={tw`w-full  flex justify-center items-center px-4    `} >
                 <View style={tw`w-full bg-white flex justify-center gap-y-6 rounded-3xl  items-center py-12 px-4 `} >
-                    <Text style={[tw`  text-4xl `, { fontFamily: "SwitzerBold" }]} >SignIn</Text>
+                    <Text style={[tw`  text-4xl `, { fontFamily: "SwitzerBold" }]} >Verification</Text>
                     <View style={tw`w-full gap-y-2`} >
                         <View style={tw` w-full relative flex justify-center  `} >
                             <TextInput value={emailText} onChangeText={setEmailText} keyboardType='email-address' style={[tw` border-[1px] rounded-xl border-black w-full  ${input === "email" || emailText ? "pt-6 pl-3 text-lg " : ""}`, { fontFamily: "Urban" }]} onFocus={(() => setInput("email"))} onBlur={() => { if (!emailText) setInput(null); }} />
                             <Text style={[tw` absolute   ${input === "email" || emailText ? "top-1 left-2 text-sm " : "left-3 text-base "} `, { fontFamily: "Switzer" }]} >Email</Text>
                         </View>
-                        {/* <View style={tw` w-full relative flex justify-center  `} >
-                    <TextInput style={[tw` border-[1px] rounded-xl border-black w-full  ${input === "password" ? "pt-6 pl-3 text-lg " : ""} `, { fontFamily: "Urban" }]} onFocus={(() => setInput("password"))} onBlur={() => setInput(null)} />
-                    <Text style={[tw` absolute   ${input === "password" ? "top-1 left-2 text-sm " : "left-3 text-base "} `, { fontFamily: "Switzer" }]} >password</Text>
-                </View> */}
-                        <Pressable style={tw`flex justify-center bg-black py-4 rounded-2xl  `} >
+
+                        {
+                            passwordStatus &&
+                            <View style={tw` w-full relative flex justify-center  `} >
+                                <TextInput value={passwordText} onChangeText={setPasswordText} secureTextEntry keyboardType='visible-password' style={[tw` border-[1px] rounded-xl border-black w-full  ${input === "password" || passwordText ? "pt-6 pl-3 text-lg " : ""}`, { fontFamily: "Urban" }]} onFocus={(() => setInput("password"))} onBlur={() => { if (!passwordText) setInput(null); }} />
+                                <Text style={[tw` absolute   ${input === "password" || passwordText ? "top-1 left-2 text-sm " : "left-3 text-base "} `, { fontFamily: "Switzer" }]} >Password</Text>
+                            </View>
+                        }
+                        {!passwordStatus && <Pressable onPress={handleVerifyEmail} style={tw`flex justify-center bg-black py-4 rounded-2xl  `} >
                             <Text style={[tw`text-white text-center text-base`, { fontFamily: "SwitzerBold" }]} >Verify</Text>
-                        </Pressable>
-                        <Pressable style={tw`flex items-end w-full   `} >
-                            <Text style={[tw`text-end mr-2 underline text-sm`, { fontFamily: "Switzer" }]} >Doesn't have an Account ?</Text>
-                        </Pressable>
+                        </Pressable>}
+                        {passwordStatus && <Pressable onPress={handleSignIn} style={tw`flex justify-center bg-black py-4 rounded-2xl  `} >
+                            <Text style={[tw`text-white text-center text-base`, { fontFamily: "SwitzerBold" }]} >SignIn</Text>
+                        </Pressable>}
                     </View>
                 </View>
             </View>

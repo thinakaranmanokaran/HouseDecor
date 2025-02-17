@@ -61,3 +61,16 @@ exports.addUser = async (req, res) => {
   }
 };
 
+
+// Check if user exists (Login)
+exports.existUser = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (user) {
+      res.status(200).json({ message: "Email exists" });
+  } else {
+      res.status(404).json({ message: "Email not found" });
+  }
+};
+
