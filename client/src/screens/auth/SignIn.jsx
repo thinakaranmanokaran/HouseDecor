@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import images from '../../assets/images'
 import tw from '../../../tailwind'
 import { Video } from "expo-av";
-
+import axios from "axios";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +25,7 @@ const SignIn = () => {
     const [passwordStatus, setPasswordStatus] = useState(false)
 
     const screenWidth = Dimensions.get("window").width;
+    // console.log("Loaded API URL:", SERVER_API_URL);
 
     function togglePassword() {
         setPasswordStatus(!passwordStatus)
@@ -61,31 +62,19 @@ const SignIn = () => {
             alert("Please enter an email");
             return;
         }
-
+    
         console.log("Making request to:", `${SERVER_API_URL}/api/users/check-email`);
-        console.log("Sending data:", JSON.stringify({ email: emailText }));
-
+    
         try {
-            const response = await fetch(`${SERVER_API_URL}/api/users/check-email`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: emailText }),
+            const response = await axios.post(`${SERVER_API_URL}/api/users/check-email`, {
+                email: emailText,
             });
-
-            console.log("Response status:", response.status);
-            const data = await response.json();
-            console.log("Response data:", data);
-
-            if (response.ok) {
-                alert("Email exists! Proceeding...");
-                togglePassword()
-            } else {
-                alert(data.message || "Email not found");
-                // navigation.navigate("SignUp")
-                toggleOTPForm()
-            }
+    
+            console.log("Response data:", response.data);
+            alert("Email exists! Proceeding...");
+            togglePassword();
         } catch (error) {
-            console.error("Error during fetch:", error);
+            console.error("Error:", error.message);
             alert("Error verifying email. Please try again later.");
         }
     };
