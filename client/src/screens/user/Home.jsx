@@ -124,8 +124,8 @@ export default function Home() {
                 <View style={[tw`p-2 w-fit  rounded-full`, { display: "flex", flexDirection: "row", alignItems: "center" }]}>
                     <Image source={images.LandingGirl} style={tw`h-10 w-10 rounded-full`} />
                     <View style={[tw` ml-2 `, { fontFamily: "Cabin" }]} >
-                        <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>Dheena</Text>
-                        <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>@dheenahere</Text>
+                        <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>John</Text>
+                        <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>@johndoe</Text>
                     </View>
                 </View>
                 <Text style={[tw`text-base text-black rounded-2xl p-1 px-3 pr-1.5 bg-white font-bold mr-2`, { fontFamily: "Cabin"}]}>220

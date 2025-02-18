@@ -40,7 +40,7 @@ export default function LandingPage() {
 
             {/* Text & Button Section */}
             <View style={tw`h-2/6 w-full px-4 flex items-center justify-center`}>
-                <Text style={[tw`text-lg font-cabin`, { fontFamily: "Cabin" }]}>Hello, Dheena</Text>
+                <Text style={[tw`text-lg font-cabin`, { fontFamily: "Cabin" }]}>Hello, Dear</Text>
                 <Text style={[tw`text-3xl font-cabin mt-1 px-6 text-center`, { fontFamily: "Switzer" }]}>
                     Happy to have you with us!
                 </Text>

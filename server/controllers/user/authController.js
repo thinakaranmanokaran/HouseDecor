@@ -60,7 +60,7 @@ exports.verifyOTP = async (req, res) => {
         // Delete OTP after verification
         await OTP.deleteOne({ email });
 
-        return res.status(200).json({ message: "OTP verified successfully" });
+        return res.status(200).json({ success: true, message: "OTP verified successfully" });
     } catch (error) {
         console.error("Error verifying OTP:", error);
         return res.status(500).json({ message: "Internal server error" });

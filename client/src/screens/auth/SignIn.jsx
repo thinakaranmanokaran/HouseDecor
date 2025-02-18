@@ -57,6 +57,37 @@ const SignIn = () => {
         return null; // Prevent UI rendering until fonts are loaded
     }
 
+    // const handleVerifyEmail = async () => {
+    //     if (!emailText) {
+    //         alert("Please enter an email");
+    //         return;
+    //     }
+    
+    //     console.log("Making request to:", `${SERVER_API_URL}/api/users/check-email`);
+    
+    //     try {
+    //         const response = await axios.post(`${SERVER_API_URL}/api/users/check-email`, {
+    //             email: emailText,
+    //         });
+    
+    //         const data = response.data; // ✅ Axios automatically parses JSON
+    //         console.log("Response data:", data);
+    
+    //         if (response.status === 200) {
+    //             alert("Email exists! Proceeding...");
+    //             togglePassword();
+    //         } else {
+    //             alert( "Email not found");
+    //             toggleOTPForm();
+    //             console.log("Email not found");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error.response?.data?.message || error.message);
+    //         alert("Error verifying email. Please try again later.");
+    //     }
+    // };
+    
+
     const handleVerifyEmail = async () => {
         if (!emailText) {
             alert("Please enter an email");
@@ -64,20 +95,63 @@ const SignIn = () => {
         }
     
         console.log("Making request to:", `${SERVER_API_URL}/api/users/check-email`);
+        console.log("Sending data:", JSON.stringify({ email: emailText }));
     
         try {
-            const response = await axios.post(`${SERVER_API_URL}/api/users/check-email`, {
-                email: emailText,
+            const response = await fetch(`${SERVER_API_URL}/api/users/check-email`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailText }),
             });
     
-            console.log("Response data:", response.data);
-            alert("Email exists! Proceeding...");
-            togglePassword();
+            console.log("Response status:", response.status);
+            const data = await response.json();
+            console.log("Response data:", data);
+    
+            if (response.ok) {
+                alert("Email exists! Proceeding...");
+                togglePassword(); // Proceed to login
+            } else {
+                alert("Email not found. Sending OTP for verification...");
+    
+                // Send OTP to email
+                sendOtpToEmail(emailText);
+            }
         } catch (error) {
-            console.error("Error:", error.message);
+            console.error("Error during fetch:", error);
             alert("Error verifying email. Please try again later.");
         }
     };
+    
+    // ✅ Function to Send OTP
+    const sendOtpToEmail = async (email) => {
+        console.log("Sending OTP to:", email);
+    
+        try {
+            const response = await fetch(`${SERVER_API_URL}/api/users/send-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+    
+            const data = await response.json();
+            console.log("OTP response:", data);
+    
+            if (response.ok) {
+                alert("OTP sent successfully!");
+                toggleOTPForm(); // Show OTP input form
+            } else {
+                alert(data.message || "Failed to send OTP. Try again.");
+            }
+        } catch (error) {
+            console.error("Error sending OTP:", error);
+            alert("Error sending OTP. Please try again later.");
+        }
+    };
+    
+
+
+
 
     const handleSignIn = async () => {
         if (!passwordText) {
