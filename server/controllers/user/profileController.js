@@ -66,6 +66,7 @@ exports.addUser = async (req, res) => {
 exports.existUser = async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
+  console.log(user);
 
   if (user) {
       res.status(200).json({ message: "Email exists" });
