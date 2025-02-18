@@ -1,4 +1,4 @@
-const { User, ExistingUser } = require('./../../models/User');
+const { User } = require('./../../models/User');
 const sendToken = require('./../../utils/jwtHelper');
 const bcrypt = require('bcryptjs'); // For password hashing and comparison
 

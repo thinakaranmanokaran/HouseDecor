@@ -10,7 +10,8 @@ import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 
 import { SERVER_API_URL } from "@env";
-
+import { OTPform } from '../../components';
+import { Dimensions } from "react-native";
 
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
@@ -20,11 +21,17 @@ const SignIn = () => {
     const [input, setInput] = useState(null);
     const [emailText, setEmailText] = useState("");
     const [passwordText, setPasswordText] = useState("");
-
+    const [showOTPForm, setShowOTPForm] = useState("");
     const [passwordStatus, setPasswordStatus] = useState(false)
+
+    const screenWidth = Dimensions.get("window").width;
 
     function togglePassword() {
         setPasswordStatus(!passwordStatus)
+    }
+
+    function toggleOTPForm() {
+        setShowOTPForm(!showOTPForm);
     }
 
     const navigation = useNavigation();
@@ -74,7 +81,8 @@ const SignIn = () => {
                 togglePassword()
             } else {
                 alert(data.message || "Email not found");
-                navigation.navigate("SignUp")
+                // navigation.navigate("SignUp")
+                toggleOTPForm()
             }
         } catch (error) {
             console.error("Error during fetch:", error);
@@ -114,10 +122,10 @@ const SignIn = () => {
 
 
     return (
-        <View style={tw` flex justify-center items-center w-full h-full   `} >
-            <Image source={images.Scooty} style={tw` h-full top-0 w-full  absolute  `} />
-            <View style={tw`w-full  flex justify-center items-center px-4    `} >
-                <View style={tw`w-full bg-white flex justify-center gap-y-6 rounded-3xl  items-center py-12 px-4 `} >
+        <View style={tw` flex justify-center ${ showOTPForm ? "items-end" : " items-start " } w-full h-full   `} >
+            <Image source={images.Scooty} style={tw` h-full top-0 w-full  absolute ] `} />
+            <View style={tw` flex-1 justify-evenly items-center px-4 flex-row     `} >
+                <View style={tw`w-full bg-white flex justify-center gap-y-6 rounded-3xl   items-center py-12 px-4 `} >
                     <Text style={[tw`  text-4xl `, { fontFamily: "SwitzerBold" }]} >Verification</Text>
                     <View style={tw`w-full gap-y-2`} >
                         <View style={tw` w-full relative flex justify-center  `} >
@@ -139,6 +147,9 @@ const SignIn = () => {
                             <Text style={[tw`text-white text-center text-base`, { fontFamily: "SwitzerBold" }]} >SignIn</Text>
                         </Pressable>}
                     </View>
+                </View>
+                <View style={tw` ml-10 mr-2`} >
+                    <OTPform togglePage={() => toggleOTPForm(false)} email={emailText} />
                 </View>
             </View>
         </View>

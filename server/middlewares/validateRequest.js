@@ -18,6 +18,16 @@ exports.validateRequest = (req, res, next) => {
     next();
   };
 
+  exports.otpRequest = (req, res, next) => {
+    const { email, otp } = req.body;
+  
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP are required' });
+  }
+
+    next();
+  };
+
   exports.projectAddRequest = (req, res, next) => {
     const { title, description, price, relation, stack, img, code, link, } = req.body;
   
