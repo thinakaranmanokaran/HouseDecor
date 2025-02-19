@@ -5,7 +5,7 @@ import tw from '../../../tailwind'
 import { Video } from "expo-av";
 import { SERVER_API_URL } from "@env";
 import axios from "axios";
-// import { useEffect } from "react";
+// import EncryptedStorage from 'react-native-encrypted-storage';
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
@@ -66,7 +66,7 @@ const Register = () => {
                 email: emailText, // Use verified email
                 password: passwordText,
             });
-
+            await AsyncStorage.setItem('token', data.token);
             Alert.alert("Success", "Account created successfully!");
             navigation.navigate("Home"); // Navigate to Sign In page
         } catch (error) {

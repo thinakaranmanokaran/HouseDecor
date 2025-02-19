@@ -1,4 +1,3 @@
-// import React from "react";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import tw from "../../../tailwind";
 // import images from "../../assets/images";
@@ -9,6 +8,9 @@ import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import { ProductCard } from "../../components";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+// import EncryptedStorage from "react-native-encrypted-storage";
+import { jwtDecode } from "jwt-decode"; // Import JWT Decoder
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
@@ -18,6 +20,7 @@ export default function Home() {
     const navigation = useNavigation();
 
     const [focused, setFocused] = useState(false)
+    const [currentUser, setCurrentUser] = useState("");
 
     const [fontsLoaded] = useFonts({
         Cabin: require("./../../assets/fonts/cabin/Cabin-Regular.ttf"),
@@ -25,18 +28,41 @@ export default function Home() {
         Switzer: require("./../../assets/fonts/general/GeneralSans-Medium.otf"),
     });
 
-    useEffect(() => {
-        async function prepare() {
-            if (fontsLoaded) {
-                await SplashScreen.hideAsync();
-            }
-        }
-        prepare();
-    }, [fontsLoaded]);
+    // useEffect(() => {
+    //     async function prepare() {
+    //         if (fontsLoaded) {
+    //             await SplashScreen.hideAsync();
+    //         }
+    //     }
+    //     prepare();
+    // }, [fontsLoaded]);
 
-    if (!fontsLoaded) {
-        return null; // Prevent UI rendering until fonts are loaded
-    }
+    // if (!fontsLoaded) return null; // Prevent UI rendering until fonts are loaded
+
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                // Retrieve the token from storage
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    // Decode the token
+                    const decoded = jwtDecode(token);
+                    console.log("Decoded JWT:", decoded); // Debugging
+
+                    // Extract the user's name
+                    setCurrentUser(decoded);
+                } else {
+                    console.log("Error", "No token found. Please log in.");
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const Genre = [
         {
@@ -124,8 +150,8 @@ export default function Home() {
                 <View style={[tw`p-2 w-fit  rounded-full`, { display: "flex", flexDirection: "row", alignItems: "center" }]}>
                     <Image source={images.LandingGirl} style={tw`h-10 w-10 rounded-full`} />
                     <View style={[tw` ml-2 `, { fontFamily: "Cabin" }]} >
-                        <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>John</Text>
-                        <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>@johndoe</Text>
+                        <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>{ currentUser.name || "John"}</Text>
+                        <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>{ currentUser.email || "@johndoe"}</Text>
                     </View>
                 </View>
                 <Text style={[tw`text-base text-black rounded-2xl p-1 px-3 pr-1.5 bg-white font-bold mr-2`, { fontFamily: "Cabin"}]}>220
