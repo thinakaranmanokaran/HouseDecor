@@ -43,7 +43,7 @@ export default function LandingPage() {
                 </Pressable>}
                 { currentUser && <Pressable
                     style={tw`bg-red py-3 px-6 rounded-2xl w-11/12 mt-6`}
-                    onPress={() => navigation.navigate("ThreeD")}
+                    onPress={() => navigation.navigate("Home")}
                 >
                     <Text style={[tw`text-white text-center text-lg`, { fontFamily: "Cabin" }]}>
                         Get Started
