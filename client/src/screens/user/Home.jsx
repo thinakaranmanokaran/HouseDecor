@@ -1,7 +1,7 @@
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import tw from "../../../tailwind";
 // import images from "../../assets/images";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
 import images from "./../../assets/images";
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +11,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 // import EncryptedStorage from "react-native-encrypted-storage";
 import { jwtDecode } from "jwt-decode"; // Import JWT Decoder
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppContext } from "../../context/AppProvider";
 
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
@@ -18,51 +19,9 @@ SplashScreen.preventAutoHideAsync();
 export default function Home() {
 
     const navigation = useNavigation();
+    const { currentUser } = useContext(AppContext);
 
     const [focused, setFocused] = useState(false)
-    const [currentUser, setCurrentUser] = useState("");
-
-    const [fontsLoaded] = useFonts({
-        Cabin: require("./../../assets/fonts/cabin/Cabin-Regular.ttf"),
-        CabinItalic: require("./../../assets/fonts/cabin/Cabin-Italic.ttf"),
-        Switzer: require("./../../assets/fonts/general/GeneralSans-Medium.otf"),
-    });
-
-    // useEffect(() => {
-    //     async function prepare() {
-    //         if (fontsLoaded) {
-    //             await SplashScreen.hideAsync();
-    //         }
-    //     }
-    //     prepare();
-    // }, [fontsLoaded]);
-
-    // if (!fontsLoaded) return null; // Prevent UI rendering until fonts are loaded
-
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                // Retrieve the token from storage
-                const token = await AsyncStorage.getItem("token");
-
-                if (token) {
-                    // Decode the token
-                    const decoded = jwtDecode(token);
-                    console.log("Decoded JWT:", decoded); // Debugging
-
-                    // Extract the user's name
-                    setCurrentUser(decoded);
-                } else {
-                    console.log("Error", "No token found. Please log in.");
-                }
-            } catch (error) {
-                console.error("Error decoding token:", error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
 
     const Genre = [
         {

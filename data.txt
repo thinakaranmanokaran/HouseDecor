@@ -1,3 +1,4 @@
+cd server
 set -a
 source .env
-node server.js
+nodemon server.js
