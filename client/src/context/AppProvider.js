@@ -15,6 +15,7 @@ export const AppProvider = ({ children }) => {
     const [fontsLoaded] = useFonts({
         Cabin: require("./../assets/fonts/cabin/Cabin-Regular.ttf"),
         Switzer: require("./../assets/fonts/general/GeneralSans-Medium.otf"),
+        Urban: require("./../assets/fonts/Urbanist-VariableFont_wght.ttf"),
     });
 
     useEffect(() => {
@@ -30,6 +31,10 @@ export const AppProvider = ({ children }) => {
                 if (token) {
                     const decoded = jwtDecode(token);
                     setCurrentUser(decoded);
+                }
+
+                if(!token){
+                    NavigationPreloadManager.navigate("LandingPage");
                 }
             } catch (error) {
                 console.error("Error initializing app:", error);

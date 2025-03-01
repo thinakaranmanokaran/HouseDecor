@@ -106,13 +106,13 @@ export default function Home() {
     return (
         <View style={[tw`p-3 py-5 bg-black  flex-1 `, { maxHeight: '100vh' }]}>
             <View style={[tw`my-2 mt-6 flex-1`, { display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", }]}>
-                <View style={[tw`p-2 w-fit  rounded-full`, { display: "flex", flexDirection: "row", alignItems: "center" }]}>
+                <Pressable style={[tw`p-2 w-fit  rounded-full`, { display: "flex", flexDirection: "row", alignItems: "center" }]} onPress={() => navigation.navigate("Profile")}  >
                     <Image source={images.LandingGirl} style={tw`h-10 w-10 rounded-full`} />
                     <View style={[tw` ml-2 `, { fontFamily: "Cabin" }]} >
                         <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>{ currentUser.name || "John"}</Text>
                         <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>{ currentUser.email || "@johndoe"}</Text>
                     </View>
-                </View>
+                </Pressable>
                 <Text style={[tw`text-base text-black rounded-2xl p-1 px-3 pr-1.5 bg-white font-bold mr-2`, { fontFamily: "Cabin"}]}>220
                 <MaterialCommunityIcons name="trophy-award" size={20} color="#FFB200" /></Text>
             </View>

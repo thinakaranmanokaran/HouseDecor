@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { LandingPage, ThreeD } from "./src/components";
-import { Camera, Home, SignIn, SignUp } from "./src/screens";
+import { Camera, Home, Profile, SignIn, SignUp } from "./src/screens";
 import { AppProvider } from "./src/context/AppProvider";
 
 const Stack = createStackNavigator();
@@ -21,6 +21,7 @@ export default function App() {
 
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Camera" component={Camera} />
+          <Stack.Screen name="Profile" component={Profile} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

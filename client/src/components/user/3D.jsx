@@ -1,52 +1,45 @@
-// import { StyleSheet, Text, View } from "react-native";
-// import React, { useEffect, useState } from "react";
-// import { GLView } from "expo-gl"; // Required for WebGL in React Native
-// import { useGLTF } from "@react-three/drei";
-// import { Canvas } from "@react-three/fiber/native"; // Use `native` for React Native compatibility
-// import { OrbitControls } from "@react-three/drei";
-// import { Asset } from "expo-asset";
-
-// const Model = () => {
-//   const { scene } = useGLTF(Asset.fromModule(require("../../assets/models/basketball.glb")).uri);
-//   return <primitive object={scene} scale={0.5} position={[0, -1, 0]} />;
-// };
-
-// const ThreeD = () => {
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <Text>ThreeD</Text>
-//       <GLView
-//         style={{ flex: 1 }}
-//         onContextCreate={(gl) => {
-//           gl.createRenderbuffer(); // Initialize WebGL context
-//         }}
-//       >
-//         {/* <Canvas> */}
-//           <ambientLight />
-//           <Model />
-//           <OrbitControls />
-//         {/* </Canvas> */}
-//       </GLView>
-//     </View>
-//   );
-// };
-
-// export default ThreeD;
-
-// const styles = StyleSheet.create({});
-
-
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from "react-native";
+import React, { useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber/native"; // Correct Native import
+import { useGLTF } from "@react-three/drei";
 
 const ThreeD = () => {
   return (
-    <View>
-      <Text>ThreeD</Text>
+    <View style={{ flex: 1 }}>
+      <Text style={styles.title}>3D Model Viewer</Text>
+      <Canvas style={{ flex: 1 }}>
+        <Scene />
+      </Canvas>
     </View>
-  )
-}
+  );
+};
 
-export default ThreeD
+const Scene = () => {
+  const modelRef = useRef();
+  const { scene } = useGLTF("https://raw.githubusercontent.com/google/filament/main/third_party/models/DamagedHelmet/DamagedHelmet.glb");
 
-const styles = StyleSheet.create({})
+  useFrame(() => {
+    if (modelRef.current) {
+      modelRef.current.rotation.y += 0.005; // Rotate the model
+    }
+  });
+
+  return (
+    <>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[2, 2, 2]} intensity={1} />
+      <primitive ref={modelRef} object={scene} scale={1.5} position={[0, -1, 0]} />
+    </>
+  );
+};
+
+export default ThreeD;
+
+const styles = StyleSheet.create({
+  title: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20,
+  },
+});
