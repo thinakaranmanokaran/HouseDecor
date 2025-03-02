@@ -12,6 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { SERVER_API_URL } from "@env";
 import { OTPform } from '../../components';
 import { Dimensions } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
@@ -158,20 +159,21 @@ const SignIn = () => {
             alert("Please enter a password");
             return;
         }
-
+    
         try {
             const response = await fetch(`${SERVER_API_URL}/api/users/signin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: emailText, password: passwordText }),
             });
-
+    
             const data = await response.json();
-
+    
             if (response.ok) {
+                await AsyncStorage.setItem("token", data.token); // Store the token
                 alert("Sign-in successful!");
-                // Navigate to Home or Dashboard
-                navigation.navigate("Home");
+                // console.log(data.token);
+                navigation.replace("Home"); // Navigate to Home
             } else {
                 alert(data.message || "Invalid credentials");
             }
@@ -180,6 +182,7 @@ const SignIn = () => {
             alert("Error signing in. Please try again.");
         }
     };
+    
 
 
 

@@ -19,7 +19,39 @@ SplashScreen.preventAutoHideAsync();
 export default function Home() {
 
     const navigation = useNavigation();
-    const { currentUser } = useContext(AppContext);
+
+        const [currentUser, setCurrentUser] = useState(null);
+        // const [fontsLoaded] = useFonts({
+        //     Cabin: require("./../assets/fonts/cabin/Cabin-Regular.ttf"),
+        //     Switzer: require("./../assets/fonts/general/GeneralSans-Medium.otf"),
+        //     Urban: require("./../assets/fonts/Urbanist-VariableFont_wght.ttf"),
+        // });
+
+    useEffect(() => {
+        const initializeApp = async () => {
+            try {
+                // Hide splash screen only when fonts are loaded
+                // if (fontsLoaded) {
+                //     await SplashScreen.hideAsync();
+                // }
+
+                // Fetch token once when app starts
+                const token = await AsyncStorage.getItem("token");
+                if (token) {
+                    const decoded = jwtDecode(token);
+                    setCurrentUser(decoded);
+                }
+
+                if(!token){
+                    NavigationPreloadManager.navigate("LandingPage");
+                }
+            } catch (error) {
+                console.error("Error initializing app:", error);
+            }
+        };
+
+        initializeApp();
+    }, []); // Runs only when fonts are loaded
 
     const [focused, setFocused] = useState(false)
 
@@ -108,16 +140,23 @@ export default function Home() {
             <View style={[tw`my-2 mt-6 flex-1`, { display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", }]}>
                 <Pressable style={[tw`p-2 w-fit  rounded-full`, { display: "flex", flexDirection: "row", alignItems: "center" }]} onPress={() => navigation.navigate("Profile")}  >
                     <Image source={images.LandingGirl} style={tw`h-10 w-10 rounded-full`} />
-                    <View style={[tw` ml-2 `, { fontFamily: "Cabin" }]} >
-                        <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>{ currentUser.name || "John"}</Text>
-                        <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>{ currentUser.email || "@johndoe"}</Text>
-                    </View>
+                    {
+                        currentUser ?
+                            <View style={[tw` ml-2 `, { fontFamily: "Cabin" }]} >
+                                <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>{currentUser.name || "John"}</Text>
+                                <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>{currentUser.email || "@johndoe"}</Text>
+                            </View> :
+                            <View style={[tw` ml-2 `, { fontFamily: "Cabin" }]} >
+                                <Text style={[tw`text-base text-white `, { fontFamily: "Cabin" }]}>John</Text>
+                                <Text style={[tw`text-xs text-white `, { fontFamily: "Cabin" }]}>@johndoe</Text>
+                            </View>
+                    }
                 </Pressable>
-                <Text style={[tw`text-base text-black rounded-2xl p-1 px-3 pr-1.5 bg-white font-bold mr-2`, { fontFamily: "Cabin"}]}>220
-                <MaterialCommunityIcons name="trophy-award" size={20} color="#FFB200" /></Text>
+                <Text style={[tw`text-base text-black rounded-2xl p-1 px-3 pr-1.5 bg-white font-bold mr-2`, { fontFamily: "Cabin" }]}>220
+                    <MaterialCommunityIcons name="trophy-award" size={20} color="#FFB200" /></Text>
             </View>
 
-            <View style={[tw`w-full  rounded-3xl bg-white p-2  flex-7  ` , { height: "auto", overflow: "hidden" }]}>
+            <View style={[tw`w-full  rounded-3xl bg-white p-2  flex-7  `, { height: "auto", overflow: "hidden" }]}>
                 <View>
                     <View style={tw`p-4`} >
                         <Text style={[tw`text-3xl text-black `, { fontFamily: "Cabin" }]}>

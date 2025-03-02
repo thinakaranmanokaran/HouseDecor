@@ -17,6 +17,7 @@ export default function LandingPage() {
 
     const navigation = useNavigation();
     const { currentUser } = useContext(AppContext);
+    console.log(currentUser)
 
     return (
         <View style={tw`flex bg-white h-full items-center bg-[#f7faf9]`}>

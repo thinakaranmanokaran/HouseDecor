@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { jwtDecode } from "jwt-decode";
+import { resetStack } from "../utils/navigationService"; // ✅ Import reset function
 
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
@@ -12,6 +13,7 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
+
     const [fontsLoaded] = useFonts({
         Cabin: require("./../assets/fonts/cabin/Cabin-Regular.ttf"),
         Switzer: require("./../assets/fonts/general/GeneralSans-Medium.otf"),
@@ -21,20 +23,16 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         const initializeApp = async () => {
             try {
-                // Hide splash screen only when fonts are loaded
-                if (fontsLoaded) {
-                    await SplashScreen.hideAsync();
-                }
-
-                // Fetch token once when app starts
                 const token = await AsyncStorage.getItem("token");
                 if (token) {
                     const decoded = jwtDecode(token);
                     setCurrentUser(decoded);
+                } else {
+                    resetStack("LandingPage"); // ✅ Navigate safely
                 }
 
-                if(!token){
-                    NavigationPreloadManager.navigate("LandingPage");
+                if (fontsLoaded) {
+                    await SplashScreen.hideAsync();
                 }
             } catch (error) {
                 console.error("Error initializing app:", error);
@@ -42,9 +40,9 @@ export const AppProvider = ({ children }) => {
         };
 
         initializeApp();
-    }, [fontsLoaded]); // Runs only when fonts are loaded
+    }, [fontsLoaded]);
 
-    if (!fontsLoaded) return null; // Prevent UI rendering until fonts load
+    if (!fontsLoaded) return null;
 
     return (
         <AppContext.Provider value={{ currentUser, setCurrentUser }}>
