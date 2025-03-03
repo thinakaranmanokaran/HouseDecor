@@ -13,6 +13,7 @@ import { SERVER_API_URL } from "@env";
 import { OTPform } from '../../components';
 import { Dimensions } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Feather from '@expo/vector-icons/Feather';
 
 // Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
@@ -24,6 +25,7 @@ const SignIn = () => {
     const [passwordText, setPasswordText] = useState("");
     const [showOTPForm, setShowOTPForm] = useState("");
     const [passwordStatus, setPasswordStatus] = useState(false)
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const screenWidth = Dimensions.get("window").width;
     // console.log("Loaded API URL:", SERVER_API_URL);
@@ -63,17 +65,17 @@ const SignIn = () => {
     //         alert("Please enter an email");
     //         return;
     //     }
-    
+
     //     console.log("Making request to:", `${SERVER_API_URL}/api/users/check-email`);
-    
+
     //     try {
     //         const response = await axios.post(`${SERVER_API_URL}/api/users/check-email`, {
     //             email: emailText,
     //         });
-    
+
     //         const data = response.data; // ✅ Axios automatically parses JSON
     //         console.log("Response data:", data);
-    
+
     //         if (response.status === 200) {
     //             alert("Email exists! Proceeding...");
     //             togglePassword();
@@ -87,34 +89,34 @@ const SignIn = () => {
     //         alert("Error verifying email. Please try again later.");
     //     }
     // };
-    
+
 
     const handleVerifyEmail = async () => {
         if (!emailText) {
             alert("Please enter an email");
             return;
         }
-    
+
         console.log("Making request to:", `${SERVER_API_URL}/api/users/check-email`);
         console.log("Sending data:", JSON.stringify({ email: emailText }));
-    
+
         try {
             const response = await fetch(`${SERVER_API_URL}/api/users/check-email`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: emailText }),
             });
-    
+
             console.log("Response status:", response.status);
             const data = await response.json();
             console.log("Response data:", data);
-    
+
             if (response.ok) {
                 alert("Email exists! Proceeding...");
                 togglePassword(); // Proceed to login
             } else {
                 alert("Email not found. Sending OTP for verification...");
-    
+
                 // Send OTP to email
                 sendOtpToEmail(emailText);
             }
@@ -123,21 +125,21 @@ const SignIn = () => {
             alert("Error verifying email. Please try again later.");
         }
     };
-    
+
     // ✅ Function to Send OTP
     const sendOtpToEmail = async (email) => {
         console.log("Sending OTP to:", email);
-    
+
         try {
             const response = await fetch(`${SERVER_API_URL}/api/users/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
             });
-    
+
             const data = await response.json();
             console.log("OTP response:", data);
-    
+
             if (response.ok) {
                 alert("OTP sent successfully!");
                 toggleOTPForm(); // Show OTP input form
@@ -149,7 +151,7 @@ const SignIn = () => {
             alert("Error sending OTP. Please try again later.");
         }
     };
-    
+
 
 
 
@@ -159,16 +161,16 @@ const SignIn = () => {
             alert("Please enter a password");
             return;
         }
-    
+
         try {
             const response = await fetch(`${SERVER_API_URL}/api/users/signin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: emailText, password: passwordText }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 await AsyncStorage.setItem("token", data.token); // Store the token
                 alert("Sign-in successful!");
@@ -182,13 +184,13 @@ const SignIn = () => {
             alert("Error signing in. Please try again.");
         }
     };
-    
+
 
 
 
 
     return (
-        <View style={tw` flex justify-center ${ showOTPForm ? "items-end" : " items-start " } w-full h-full   `} >
+        <View style={tw` flex justify-center ${showOTPForm ? "items-end" : " items-start "} w-full h-full   `} >
             <Image source={images.Scooty} style={tw` h-full top-0 w-full  absolute ] `} />
             <View style={tw` flex-1 justify-evenly items-center px-4 flex-row     `} >
                 <View style={tw`w-full bg-white flex justify-center gap-y-6 rounded-3xl   items-center py-12 px-4 `} >
@@ -201,9 +203,32 @@ const SignIn = () => {
 
                         {
                             passwordStatus &&
-                            <View style={tw` w-full relative flex justify-center  `} >
-                                <TextInput value={passwordText} onChangeText={setPasswordText} secureTextEntry keyboardType='visible-password' style={[tw` border-[1px] rounded-xl border-black w-full  ${input === "password" || passwordText ? "pt-6 pl-3 text-lg " : ""}`, { fontFamily: "Urban" }]} onFocus={(() => setInput("password"))} onBlur={() => { if (!passwordText) setInput(null); }} />
-                                <Text style={[tw` absolute   ${input === "password" || passwordText ? "top-1 left-2 text-sm " : "left-3 text-base "} `, { fontFamily: "Switzer" }]} >Password</Text>
+                            <View style={tw`w-full relative flex justify-center`}>
+                                <TextInput
+                                    value={passwordText}
+                                    onChangeText={setPasswordText}
+                                    secureTextEntry={!isPasswordVisible} // 🔥 Toggle password visibility
+                                    keyboardType='default'
+                                    style={[
+                                        tw`border-[1px] rounded-xl border-black w-full ${input === "password" || passwordText ? "pt-6 pl-3 text-lg" : ""}`,
+                                        { fontFamily: "Urban" }
+                                    ]}
+                                    onFocus={() => setInput("password")}
+                                    onBlur={() => { if (!passwordText) setInput(null); }}
+                                />
+
+                                {/* Password Label */}
+                                <Text style={[tw`absolute ${input === "password" || passwordText ? "top-1 left-2 text-sm" : "left-3 text-base"}`, { fontFamily: "Switzer" }]}>
+                                    Password
+                                </Text>
+
+                                {/* Show/Hide Icon Button */}
+                                <Pressable
+                                    style={tw`absolute right-3   `}
+                                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                                >
+                                    {isPasswordVisible ? <Feather name="eye" size={24} color="black" /> : <Feather name="eye-off" size={24} color="black" />}
+                                </Pressable>
                             </View>
                         }
                         {!passwordStatus && <Pressable onPress={handleVerifyEmail} style={tw`flex justify-center bg-black py-4 rounded-2xl  `} >
